@@ -60,6 +60,19 @@ def simulate_impression(user, item):
     return clicked, dwell_time
 
 
+def demo_impression_variability(users, catalog, n_runs=20):
+    """Pick one random user/item pair and run simulate_impression on it n_runs
+    times, to show whether the output varies across runs for the same input."""
+    user = random.choice(users)
+    item = random.choice(catalog)
+    print(f"user {user['id']} x item {item['id']} ({item['category']})")
+    results = [simulate_impression(user, item) for _ in range(n_runs)]
+    for i, result in enumerate(results, 1):
+        print(f"  run {i}: {result}")
+    print(f"  identical across all {n_runs} runs: {len(set(results)) == 1}")
+    return user, item, results
+
+
 def save_dataset(users, catalog, out_dir="data"):
     """Write generated users and catalog to <out_dir>/users.json and catalog.json."""
     out_path = Path(out_dir)
@@ -75,3 +88,4 @@ if __name__ == "__main__":
     users_path, catalog_path = save_dataset(generated_users, generated_catalog)
     print(f"Wrote {len(generated_users)} users to {users_path}")
     print(f"Wrote {len(generated_catalog)} items to {catalog_path}")
+    demo_impression_variability(generated_users, generated_catalog)
