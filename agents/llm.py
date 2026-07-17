@@ -14,7 +14,7 @@ def get_client():
     return anthropic.Anthropic()  # The client object
 
 
-def structured_call(client, system, user_content, schema, max_tokens=1024): # Reusable wrapper
+def structured_call(client, system, user_content, schema, max_tokens=1024, usage_out=None): # Reusable wrapper
     """Call Claude and return its response parsed against a JSON schema."""
     response = client.messages.create(
         model=MODEL_ID,
@@ -23,6 +23,9 @@ def structured_call(client, system, user_content, schema, max_tokens=1024): # Re
         messages=[{"role": "user", "content": user_content}],
         output_config={"format": {"type": "json_schema", "schema": schema}},
     )
+    if usage_out is not None:
+        usage_out["input_tokens"] = response.usage.input_tokens
+        usage_out["output_tokens"] = response.usage.output_tokens
     # Extract only the text portion from response
     text = next(block.text for block in response.content if block.type == "text")
     return json.loads(text)
@@ -36,3 +39,4 @@ if __name__ == "__main__":
         messages=[{"role": "user", "content": "Capital of the US?."}],
     )
     print(_response.content[0].text)
+    print("Token usage:", _response.usage.input_tokens, "in /", _response.usage.output_tokens, "out")
