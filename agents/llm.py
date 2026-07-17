@@ -9,12 +9,12 @@ MODEL_ID = "claude-haiku-4-5"
 
 
 def get_client():
-    """Build a default Anthropic client, resolving credentials from the environment."""
-    load_dotenv()
-    return anthropic.Anthropic()
+    """Build a default reusable Anthropic client, resolving credentials from the environment."""
+    load_dotenv() # stores ANTHROPIC_API_KEY
+    return anthropic.Anthropic()  # The client object
 
 
-def structured_call(client, system, user_content, schema, max_tokens=1024):
+def structured_call(client, system, user_content, schema, max_tokens=1024): # Reusable wrapper
     """Call Claude and return its response parsed against a JSON schema."""
     response = client.messages.create(
         model=MODEL_ID,
@@ -23,6 +23,7 @@ def structured_call(client, system, user_content, schema, max_tokens=1024):
         messages=[{"role": "user", "content": user_content}],
         output_config={"format": {"type": "json_schema", "schema": schema}},
     )
+    # Extract only the text portion from response
     text = next(block.text for block in response.content if block.type == "text")
     return json.loads(text)
 
