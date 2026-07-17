@@ -1,0 +1,27 @@
+"""Shared Claude client and structured-output helper for the researcher/strategist/executor agents."""
+
+import json
+
+import anthropic
+from dotenv import load_dotenv
+
+MODEL_ID = "claude-haiku-4-5"
+
+
+def get_client():
+    """Build a default Anthropic client, resolving credentials from the environment."""
+    load_dotenv()
+    return anthropic.Anthropic()
+
+
+def structured_call(client, system, user_content, schema, max_tokens=1024):
+    """Call Claude and return its response parsed against a JSON schema."""
+    response = client.messages.create(
+        model=MODEL_ID,
+        max_tokens=max_tokens,
+        system=system,
+        messages=[{"role": "user", "content": user_content}],
+        output_config={"format": {"type": "json_schema", "schema": schema}},
+    )
+    text = next(block.text for block in response.content if block.type == "text")
+    return json.loads(text)
