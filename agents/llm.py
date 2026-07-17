@@ -25,3 +25,13 @@ def structured_call(client, system, user_content, schema, max_tokens=1024):
     )
     text = next(block.text for block in response.content if block.type == "text")
     return json.loads(text)
+
+
+if __name__ == "__main__":
+    _client = get_client()
+    _response = _client.messages.create(
+        model=MODEL_ID,
+        max_tokens=20,
+        messages=[{"role": "user", "content": "Capital of the US?."}],
+    )
+    print(_response.content[0].text)
