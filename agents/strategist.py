@@ -16,7 +16,7 @@ _PLAN_SCHEMA = {
 }
 
 
-def plan_next_action(user_summary, catalog, client=None):
+def plan_next_action(user_summary, catalog, client=None, usage_out=None):
     """
     Given a user summary from the researcher agent, decide what to serve next.
 
@@ -24,6 +24,7 @@ def plan_next_action(user_summary, catalog, client=None):
         user_summary: dict from research_user()
         catalog: available items/ads to choose from
         client: an Anthropic client (or test double); defaults to a real one
+        usage_out: optional dict; if given, populated with input_tokens/output_tokens
 
     Returns:
         dict with target_category, mode ("explore" or "exploit"), and reason
@@ -48,6 +49,7 @@ def plan_next_action(user_summary, catalog, client=None):
             "Decide the target category, whether this is explore or exploit, and why."
         ),
         schema=_PLAN_SCHEMA,
+        usage_out=usage_out,
     )
 
     if result["target_category"] not in available_categories:
@@ -67,4 +69,6 @@ if __name__ == "__main__":
         {"id": "2", "category": "sports"},
         {"id": "3", "category": "home"},
     ]
-    print(plan_next_action(_user_summary, _catalog))
+    _usage = {}
+    print(plan_next_action(_user_summary, _catalog, usage_out=_usage))
+    print("Token usage:", _usage)

@@ -20,7 +20,7 @@ _SERVE_SCHEMA = {
 }
 
 
-def serve_item(plan, catalog, client=None):
+def serve_item(plan, catalog, client=None, usage_out=None):
     """
     Given a serving plan from the strategist agent, pick and serve a concrete item.
 
@@ -28,6 +28,7 @@ def serve_item(plan, catalog, client=None):
         plan: dict from plan_next_action()
         catalog: available items/ads to choose from
         client: an Anthropic client (or test double); defaults to a real one
+        usage_out: optional dict; if given, populated with input_tokens/output_tokens
 
     Returns:
         dict with the served item and the logged reason for the decision
@@ -52,6 +53,7 @@ def serve_item(plan, catalog, client=None):
             "Pick one item_id from the shortlist."
         ),
         schema=_SERVE_SCHEMA,
+        usage_out=usage_out,
     )
 
     shortlist_by_id = {item["id"]: item for item in shortlist}
@@ -72,4 +74,6 @@ if __name__ == "__main__":
         {"id": 3, "category": "electronics"},
         {"id": 4, "category": "home"},
     ]
-    print(serve_item(_plan, _catalog))
+    _usage = {}
+    print(serve_item(_plan, _catalog, usage_out=_usage))
+    print("Token usage:", _usage)
