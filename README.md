@@ -5,7 +5,10 @@ strategist, executor) learns to personalize item recommendations from simulated
 user click and dwell-time behavior — with every decision logged and explainable.
 
 ## Status
-🚧 In progress — skeleton stage.
+🚧 In progress — simulator, memory store, and all three agents (researcher,
+strategist, executor) are implemented and unit-tested. The eval harness
+(`eval/run_eval.py`) that chains them into an end-to-end pipeline and compares
+against baselines is not yet implemented.
 
 ## Architecture
 
