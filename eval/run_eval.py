@@ -51,14 +51,17 @@ def run_baseline(strategy, users, catalog, n_sessions):
     }
 
 
-def run_agent_pipeline(users, catalog, n_sessions):
+def run_agent_pipeline(users, catalog, n_sessions, client=None):
     """Run the full researcher -> strategist -> executor pipeline and return a stats dict.
 
     Each session: pick a user, summarize their history so far, decide what to
     serve, serve it, simulate the outcome, and log it back to memory so later
     sessions for that user reflect what was just learned.
+
+    Args:
+        client: an Anthropic client (or test double); defaults to a real one
     """
-    client = get_client()
+    client = client or get_client()
     store = MemoryStore(db_path=":memory:")
     catalog_by_id = {str(item["id"]): item for item in catalog}
 
