@@ -5,28 +5,13 @@ strategist, executor) learns to personalize item recommendations from simulated
 user click and dwell-time behavior — with every decision logged and explainable.
 
 ## Status
-🚧 In progress — simulator, memory store, and all three agents (researcher,
-strategist, executor) are implemented and unit-tested. The eval harness
-(`eval/run_eval.py`) that chains them into an end-to-end pipeline and compares
-against baselines is not yet implemented.
+🚧 In progress — simulator, memory store, all three agents (researcher,
+strategist, executor), and the eval harness (`eval/run_eval.py`, with random
+and most-popular baselines) are implemented and unit-tested.
 
 ## Architecture
 
-```
-User signals (clicks, dwell time)
-        |
-        v
-Researcher agent  -->  summarizes what's known about the user
-        |
-        v
-Strategist agent  -->  decides what to serve next (uses Memory store)
-        |
-        v
-Executor agent    -->  serves the item, logs the decision
-        |
-        v
-Memory store      <--  updated with the outcome
-```
+![Architecture diagram](architecture.png)
 
 ## Project structure
 
